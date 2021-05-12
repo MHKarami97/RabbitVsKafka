@@ -51,6 +51,9 @@ namespace kafkaProducer
         static void Produce()
         {
             var counter = 1;
+            
+            //The --Null-- deserializer will throw an exception if the corresponding message key or value is not null,
+            //whereas the --Ignore-- deserializer will return null regardless of whether the data is null or something else.
             using var producer = new ProducerBuilder<Null, string>(_config).Build();
 
             while (true)
