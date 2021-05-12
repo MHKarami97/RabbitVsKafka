@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Confluent.Kafka;
 
 namespace kafkaProducer
@@ -7,7 +8,6 @@ namespace kafkaProducer
     {
         private static ProducerConfig _config;
         private const string TopicName = "my-topic";
-        private const int RepitTime = 100;
 
         static void Main(string[] args)
         {
@@ -50,17 +50,20 @@ namespace kafkaProducer
 
         static void Produce()
         {
+            var counter = 1;
             using var producer = new ProducerBuilder<Null, string>(_config).Build();
 
-            for (var i = 0; i < RepitTime; ++i)
+            while (true)
             {
-                producer.Produce(TopicName, new Message<Null, string> {Value = i.ToString()}, Handler);
+                producer.Produce(TopicName, new Message<Null, string> {Value = (counter++).ToString()}, Handler);
 
                 //The Produce method is more efficient, and you should care about that if your throughput is high (>~ 20k msgs/s).
                 //Even if your throughput is low,
                 //the difference between Produce and ProduceAsync will be negligible compared to whatever else you application is doing.
                 //As a general rule, Produce is recommended
                 //await producer.ProduceAsync(TopicName, new Message<Null, string> {Value = i.ToString()});
+                
+                Thread.SpinWait(500);
             }
 
             // wait for up to 10 seconds for any inflight messages to be delivered.
