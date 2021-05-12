@@ -24,11 +24,29 @@ namespace RabbitMqPublisher
 
             var factory = new ConnectionFactory
             {
-                AutomaticRecoveryEnabled = true
+                AutomaticRecoveryEnabled = true,
+
+                //Ideally, you should establish one connection per process with a dedicated channel given to each new thread.
+                //Setting channel_max to 0 means "unlimited".
+                //This could be a dangerous move, since applications sometimes have channel leaks.
+
+                //RequestedChannelMax = 10
             };
 
+            //Each channel consumes a relatively small amount of memory on the client, compared to a connection.
+            //Too many connections can be a heavy burden on the RabbitMQ server memory usage.
+            //Try to keep long-lived connections and instead open and close channels more frequently, if required.
+
+            //Recommend that each process only creates one TCP connection
+            //and uses multiple channels in that connection for different threads.
+
+            //Use at least one connection for publishing and one for consuming for each app/service/process
             var connection = factory.CreateConnection();
 
+            //Connections can multiplex over a single TCP connection,
+            //meaning that an application can open "lightweight connections" on a single connection.
+            //A channel acts as a virtual connection inside a TCP connection.
+            //Don’t share channels between threads
             _channel = connection.CreateModel();
 
             //Publisher confirms are a RabbitMQ extension to the AMQP 0.9.1 protocol, so they are not enabled by default.
