@@ -9,6 +9,8 @@ namespace KafkaConsumer
     {
         private static ConsumerConfig _config;
         private const string TopicName = "my-topic";
+        private const string GroupId = "test-consumer-group";
+        private const string BootstrapServers = "localhost:9092";
 
         static async Task Main(string[] args)
         {
@@ -16,8 +18,8 @@ namespace KafkaConsumer
 
             _config = new ConsumerConfig
             {
-                BootstrapServers = "localhost:9092",
-                GroupId = "test-consumer-group",
+                BootstrapServers = BootstrapServers,
+                GroupId = GroupId,
 
                 // Note: The AutoOffsetReset property determines the start offset in the event
                 // there are not yet any committed offsets for the consumer group for the
@@ -37,7 +39,7 @@ namespace KafkaConsumer
             consumer.Subscribe(TopicName);
 
             var cts = new CancellationTokenSource();
-            
+
             Console.CancelKeyPress += (_, e) =>
             {
                 e.Cancel = true; // prevent the process from terminating.

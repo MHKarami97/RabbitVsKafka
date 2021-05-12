@@ -8,6 +8,7 @@ namespace kafkaProducer
     {
         private static ProducerConfig _config;
         private const string TopicName = "my-topic";
+        private const string BootstrapServers = "localhost:9092";
 
         static void Main(string[] args)
         {
@@ -15,7 +16,7 @@ namespace kafkaProducer
 
             _config = new ProducerConfig
             {
-                BootstrapServers = "localhost:9092",
+                BootstrapServers = BootstrapServers,
 
                 //the minimum time between batches of messages being sent to the cluster.
                 //Larger values allow for more batching, which increases throughput. Smaller values may reduce latency.
@@ -51,7 +52,7 @@ namespace kafkaProducer
         static void Produce()
         {
             var counter = 1;
-            
+
             //The --Null-- deserializer will throw an exception if the corresponding message key or value is not null,
             //whereas the --Ignore-- deserializer will return null regardless of whether the data is null or something else.
             using var producer = new ProducerBuilder<Null, string>(_config).Build();
@@ -65,7 +66,7 @@ namespace kafkaProducer
                 //the difference between Produce and ProduceAsync will be negligible compared to whatever else you application is doing.
                 //As a general rule, Produce is recommended
                 //await producer.ProduceAsync(TopicName, new Message<Null, string> {Value = i.ToString()});
-                
+
                 Thread.SpinWait(500);
             }
 
