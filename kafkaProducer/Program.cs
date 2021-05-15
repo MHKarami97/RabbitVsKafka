@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Confluent.Kafka;
 
 namespace kafkaProducer
@@ -10,7 +11,7 @@ namespace kafkaProducer
         private const string TopicName = "my-topic";
         private const string BootstrapServers = "localhost:9092";
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Console.WriteLine("Start");
 
@@ -46,10 +47,10 @@ namespace kafkaProducer
                 EnableIdempotence = null
             };
 
-            Produce();
+            await Produce();
         }
 
-        static void Produce()
+        static async Task Produce()
         {
             var counter = 1;
 
@@ -59,19 +60,39 @@ namespace kafkaProducer
 
             while (true)
             {
-                producer.Produce(TopicName, new Message<Null, string> {Value = (counter++).ToString()}, Handler);
+                producer.Produce(TopicName, new Message<Null, string>
+                {
+                    Value = (counter++).ToString()
+                }, Handler);
 
-                //The Produce method is more efficient, and you should care about that if your throughput is high (>~ 20k msgs/s).
+                // Note: Awaiting the asynchronous produce request below prevents flow of execution
+                // from proceeding until the acknowledgement from the broker is received (at the 
+                // expense of low throughput).
+
+                // var deliveryReport = await producer
+                //     .ProduceAsync(TopicName, new Message<Null, string>
+                //     {
+                //         Value = (counter++).ToString()
+                //     });
+                //
+                // Console.WriteLine($"delivered to: {deliveryReport.TopicPartitionOffset}");
+
+                //The Produce method is more efficient,
+                //and you should care about that if your throughput is high (>~ 20k msgs/s).
                 //Even if your throughput is low,
-                //the difference between Produce and ProduceAsync will be negligible compared to whatever else you application is doing.
+                //the difference between Produce and ProduceAsync
+                //will be negligible compared to whatever else you application is doing.
                 //As a general rule, Produce is recommended
-                //await producer.ProduceAsync(TopicName, new Message<Null, string> {Value = i.ToString()});
 
                 Thread.SpinWait(500);
             }
 
+            // Since we are producing synchronously, at this point there will be no messages
+            // in-flight and no delivery reports waiting to be acknowledged, so there is no
+            // need to call producer.Flush before disposing the producer.
+
             // wait for up to 10 seconds for any inflight messages to be delivered.
-            producer.Flush(TimeSpan.FromSeconds(10));
+            //producer.Flush(TimeSpan.FromSeconds(10));
         }
 
         static void Handler(DeliveryReport<Null, string> report)
