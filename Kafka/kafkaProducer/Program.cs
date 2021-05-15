@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Confluent.Kafka;
 
 namespace kafkaProducer
@@ -11,7 +10,7 @@ namespace kafkaProducer
         private const string TopicName = "my-topic";
         private const string BootstrapServers = "localhost:9092";
 
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             Console.WriteLine("Start");
 
@@ -47,10 +46,10 @@ namespace kafkaProducer
                 EnableIdempotence = null
             };
 
-            await Produce();
+            Produce();
         }
 
-        static async Task Produce()
+        static void Produce()
         {
             var counter = 1;
 

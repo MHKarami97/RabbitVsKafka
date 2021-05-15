@@ -1,26 +1,26 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kafkaProducer", "kafkaProducer\kafkaProducer.csproj", "{7655B878-9F5B-4ACF-891A-91351E920943}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kafkaProducer", "Kafka\kafkaProducer\kafkaProducer.csproj", "{7655B878-9F5B-4ACF-891A-91351E920943}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaConsumer", "KafkaConsumer\KafkaConsumer.csproj", "{4E1F6E39-2217-414C-B8F0-040F8F3694BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaConsumer", "Kafka\KafkaConsumer\KafkaConsumer.csproj", "{4E1F6E39-2217-414C-B8F0-040F8F3694BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMqPublisher", "RabbitMqPublisher\RabbitMqPublisher.csproj", "{92BA2200-BE1B-4CA1-B765-58C62924EF89}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMqPublisher", "Rabbitmq\RabbitMqPublisher\RabbitMqPublisher.csproj", "{92BA2200-BE1B-4CA1-B765-58C62924EF89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMqConsumer", "RabbitMqConsumer\RabbitMqConsumer.csproj", "{D159261D-A84E-4F3E-9BE1-17EF64CAC65A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMqConsumer", "Rabbitmq\RabbitMqConsumer\RabbitMqConsumer.csproj", "{D159261D-A84E-4F3E-9BE1-17EF64CAC65A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kafka", "Kafka", "{6A14B4B2-699C-4C39-9F00-852E185F3922}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RabbitMq", "RabbitMq", "{31058509-6C12-435B-881E-850AA4D8C118}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaAdmin", "KafkaAdmin\KafkaAdmin.csproj", "{C844A5B6-9425-4B05-BDB7-419872B5C83B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaAdmin", "Kafka\KafkaAdmin\KafkaAdmin.csproj", "{C844A5B6-9425-4B05-BDB7-419872B5C83B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaAvroGeneric", "KafkaAvroGeneric\KafkaAvroGeneric.csproj", "{128D3C16-E298-4138-B7D1-F58789FDC855}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaAvroGeneric", "Kafka\KafkaAvroGeneric\KafkaAvroGeneric.csproj", "{128D3C16-E298-4138-B7D1-F58789FDC855}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaTopicPartitionOffset", "KafkaTopicPartitionOffset\KafkaTopicPartitionOffset.csproj", "{EA2A1A87-DA5F-422C-B109-D78ACD017AD0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaTopicPartitionOffset", "Kafka\KafkaTopicPartitionOffset\KafkaTopicPartitionOffset.csproj", "{EA2A1A87-DA5F-422C-B109-D78ACD017AD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaJsonSerialization", "KafkaJsonSerialization\KafkaJsonSerialization.csproj", "{CB669B23-A265-4D8E-9E56-76C4AF098CAA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaJsonSerialization", "Kafka\KafkaJsonSerialization\KafkaJsonSerialization.csproj", "{CB669B23-A265-4D8E-9E56-76C4AF098CAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaMultiProducer", "KafkaMultiProducer\KafkaMultiProducer.csproj", "{275DD3D1-797A-4D69-A3AD-6875C20B7C01}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaMultiProducer", "Kafka\KafkaMultiProducer\KafkaMultiProducer.csproj", "{275DD3D1-797A-4D69-A3AD-6875C20B7C01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

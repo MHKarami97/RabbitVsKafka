@@ -13,7 +13,7 @@ namespace RabbitMqPublisher
         private static IModel _channel;
         private static IBasicProperties _properties;
 
-        private const string Queue = "myQueue";
+        //private const string Queue = "myQueue";
         private const string Exchange = "myExchange";
         private const string RoutingKey = "myRouting";
         private static ConcurrentDictionary<ulong, string> _outstandingConfirms = new();
@@ -62,13 +62,13 @@ namespace RabbitMqPublisher
 
             //multiple: this is a boolean value. If false, only one message is confirmed/nack-ed, if true,
             //all messages with a lower or equal sequence number are confirmed/nack-ed.
-            _channel.BasicAcks += (sender, ea) =>
+            _channel.BasicAcks += (_, ea) =>
             {
                 // code when message is confirmed
 
                 CleanOutstandingConfirms(ea.DeliveryTag, ea.Multiple);
             };
-            _channel.BasicNacks += (sender, ea) =>
+            _channel.BasicNacks += (_, ea) =>
             {
                 //code when message is nack-ed
 
@@ -98,9 +98,9 @@ namespace RabbitMqPublisher
             try
             {
                 var counter = 1;
-                var batchSize = 100;
                 var body = string.Empty;
-                var outstandingMessageCount = 0;
+                // var batchSize = 100;
+                // var outstandingMessageCount = 0;
 
                 while (true)
                 {
