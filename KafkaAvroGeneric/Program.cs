@@ -45,7 +45,10 @@ namespace KafkaAvroGeneric
             {
                 using var schemaRegistry =
                     new CachedSchemaRegistryClient(
-                        new SchemaRegistryConfig {Url = SchemaRegistryUrl});
+                        new SchemaRegistryConfig
+                        {
+                            Url = SchemaRegistryUrl
+                        });
                 
                 using var consumer =
                     new ConsumerBuilder<string, GenericRecord>(new ConsumerConfig
