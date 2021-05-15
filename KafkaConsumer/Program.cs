@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Confluent.Kafka;
 
 namespace KafkaConsumer
@@ -13,7 +12,7 @@ namespace KafkaConsumer
         private const string GroupId = "test-consumer-group";
         private const string BootstrapServers = "localhost:9092";
 
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             Console.WriteLine("Start");
 
