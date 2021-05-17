@@ -1,1 +1,9 @@
 http://tryrabbitmq.com
+
+https://jmcle.github.io/rabbitmq-visualizer
+
+https://www.cloudamqp.com/blog/the-relationship-between-connections-and-channels-in-rabbitmq.html
+
+https://www.tutlane.com/tutorial/rabbitmq/rabbitmq-exchanges
+
+https://www.rabbitmq.com/clustering.html
