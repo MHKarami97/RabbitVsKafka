@@ -14,7 +14,6 @@ namespace RabbitMqPublisher
         private static IModel _channel;
         private static IBasicProperties _properties;
         private static RabbitMqConfig _config;
-
         private static readonly ConcurrentDictionary<ulong, string> OutstandingConfirms = new();
 
         static void Main(string[] args)
@@ -139,7 +138,7 @@ namespace RabbitMqPublisher
                     //     outstandingMessageCount = 0;
                     // }
 
-                    Thread.SpinWait(500);
+                    Thread.SpinWait(3000);
                 }
             }
             catch (OperationInterruptedException e)

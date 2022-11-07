@@ -42,24 +42,17 @@ namespace RabbitMqConsumer
 
             _ = _channel.CreateBasicProperties();
 
-            //if queue has 'x-dead-letter-routing-key' it can be 'direct', if not it must be 'fanout'
-            _channel.ExchangeDeclare(
-                exchange: _config.DeadLetter.Exchange,
-                type: "direct",
-                durable: true,
-                autoDelete: false);
-
             _channel.ExchangeDeclare(
                 exchange: _config.Exchange,
                 type: _config.ExchangeType,
-                durable: true,
-                autoDelete: false);
+                durable: _config.Durable,
+                autoDelete: _config.AutoDelete);
 
             _channel.QueueDeclare(
                 queue: _config.Queue,
-                durable: false,
-                exclusive: false,
-                autoDelete: false,
+                durable: _config.Durable,
+                exclusive: _config.Exclusive,
+                autoDelete: _config.AutoDelete,
                 arguments: new Dictionary<string, object>
                 {
                     { "x-dead-letter-exchange", _config.DeadLetter.Exchange },
@@ -70,6 +63,25 @@ namespace RabbitMqConsumer
                 queue: _config.Queue,
                 exchange: _config.Exchange,
                 routingKey: _config.RouteKey);
+
+            //Dead Letter
+            //if queue has 'x-dead-letter-routing-key' it can be 'direct', if not it must be 'fanout'
+            _channel.ExchangeDeclare(
+                exchange: _config.DeadLetter.Exchange,
+                type: "direct",
+                durable: true,
+                autoDelete: false);
+
+            _channel.QueueDeclare(
+                queue: _config.QueueDeadLetter,
+                durable: true,
+                exclusive: false,
+                autoDelete: false);
+
+            _channel.QueueBind(
+                queue: _config.QueueDeadLetter,
+                exchange: _config.DeadLetter.Exchange,
+                routingKey: _config.DeadLetter.RoutingKey);
 
             var consumer = new EventingBasicConsumer(_channel);
 
@@ -90,7 +102,7 @@ namespace RabbitMqConsumer
 
                     //var isSuccessful = Received.Invoke(message);
 
-                    if (HandleIsSuccess())
+                    if (HandleIsSuccess(counter))
                     {
                         counter = 0;
 
@@ -143,11 +155,26 @@ namespace RabbitMqConsumer
             Console.ReadLine();
         }
 
-        private static bool HandleIsSuccess()
+        private static bool HandleIsSuccess(int counter)
         {
+            var rndInterrupt = new Random().Next(1, 1000);
+
+            if (rndInterrupt > 700)
+            {
+                return false;
+            }
+
             var rnd = new Random().Next(1, 1000);
 
-            return rnd <= 500;
+            if (rnd <= 500)
+            {
+                if (counter > 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
