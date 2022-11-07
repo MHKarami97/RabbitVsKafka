@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
+using Util;
 
 namespace RabbitMqPublisher
 {
@@ -12,19 +13,19 @@ namespace RabbitMqPublisher
     {
         private static IModel _channel;
         private static IBasicProperties _properties;
+        private static RabbitMqConfig _config;
 
-        //private const string Queue = "myQueue";
-        private const string Exchange = "myExchange";
-        private const string RoutingKey = "myRouting";
-        private static ConcurrentDictionary<ulong, string> _outstandingConfirms = new();
+        private static readonly ConcurrentDictionary<ulong, string> OutstandingConfirms = new();
 
         static void Main(string[] args)
         {
             Console.WriteLine("Start");
 
+            _config = Configuration.GetConfiguration();
+
             var factory = new ConnectionFactory
             {
-                AutomaticRecoveryEnabled = true,
+                AutomaticRecoveryEnabled = _config.AutomaticRecoveryEnabled
 
                 //Ideally, you should establish one connection per process with a dedicated channel given to each new thread.
                 //Setting channel_max to 0 means "unlimited".
@@ -65,17 +66,15 @@ namespace RabbitMqPublisher
             _channel.BasicAcks += (_, ea) =>
             {
                 // code when message is confirmed
-
                 CleanOutstandingConfirms(ea.DeliveryTag, ea.Multiple);
             };
+
             _channel.BasicNacks += (_, ea) =>
             {
                 //code when message is nack-ed
+                OutstandingConfirms.TryGetValue(ea.DeliveryTag, out var body);
 
-                _outstandingConfirms.TryGetValue(ea.DeliveryTag, out var body);
-
-                Console.WriteLine(
-                    $"Message with body {body} has been nack-ed. Sequence number: {ea.DeliveryTag}, multiple: {ea.Multiple}");
+                Console.WriteLine($"Message with body {body} has been nack-ed. Sequence number: {ea.DeliveryTag}, multiple: {ea.Multiple}");
 
                 CleanOutstandingConfirms(ea.DeliveryTag, ea.Multiple);
             };
@@ -88,7 +87,7 @@ namespace RabbitMqPublisher
             //RabbitMQ doesn't do fsync(2) for every message -- it may be just saved to cache and not really written to the disk.
             //The persistence guarantees aren't strong, but it's more than enough for our simple task queue.
             //If you need a stronger guarantee then you can use publisher confirms
-            _properties.Persistent = true;
+            _properties.Persistent = _config.Persistent;
 
             Send();
         }
@@ -106,11 +105,11 @@ namespace RabbitMqPublisher
                 {
                     body = $"my message {counter++}";
 
-                    _outstandingConfirms.TryAdd(_channel.NextPublishSeqNo, body);
+                    OutstandingConfirms.TryAdd(_channel.NextPublishSeqNo, body);
 
                     _channel.BasicPublish(
-                        exchange: Exchange,
-                        routingKey: RoutingKey,
+                        exchange: _config.Exchange,
+                        routingKey: _config.RouteKey,
                         basicProperties: _properties,
                         body: Encoding.UTF8.GetBytes(body));
 
@@ -125,7 +124,6 @@ namespace RabbitMqPublisher
                     //This approach is not going to deliver throughput of more than a few hundreds of published messages per second
 
                     //_channel.WaitForConfirmsOrDie(new TimeSpan(0, 0, 5));
-
 
                     //Waiting for a batch of messages to be confirmed improves throughput drastically over waiting for a confirm
                     //for individual message (up to 20-30 times with a remote RabbitMQ node).
@@ -162,17 +160,16 @@ namespace RabbitMqPublisher
         {
             if (multiple)
             {
-                var confirmed = _outstandingConfirms
-                    .Where(k => k.Key <= sequenceNumber);
+                var confirmed = OutstandingConfirms.Where(k => k.Key <= sequenceNumber);
 
                 foreach (var entry in confirmed)
                 {
-                    _outstandingConfirms.TryRemove(entry.Key, out _);
+                    OutstandingConfirms.TryRemove(entry.Key, out _);
                 }
             }
             else
             {
-                _outstandingConfirms.TryRemove(sequenceNumber, out _);
+                OutstandingConfirms.TryRemove(sequenceNumber, out _);
             }
         }
     }
